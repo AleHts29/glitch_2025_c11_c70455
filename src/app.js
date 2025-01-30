@@ -7,7 +7,7 @@ import viewRouter from './routes/views.router.js'
 
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 
 //Preparar la configuracion del servidor para recibir objetos JSON.
@@ -45,33 +45,30 @@ const httpServer = app.listen(PORT, () => {
 // Creamos instacia de socket
 const socketServer = new Server(httpServer)
 
-const logs = []
+const messages = []
 socketServer.on('connection', socket => {
     // TODO: Aqui se implementa logica del socket
-
-
-    // socket.on("message_key", data => {
-    //     console.log("Recibimos el mensaje: ", data)
-
-    // })
-
-    // socket.emit('msg2_key', "Hola soy el el Backend");
-
-    // socket.broadcast.emit('msg3_key', "Este evento es para todos los sockets, menos el socket desde que se emitió el mensaje!")
-
-    // socketServer.emit('msg4_key', "Este evento lo ven todos los sockets!!....")
+    // Esto lo ve cualquier user que se conecte
+    socketServer.emit('messageLogs', messages)
 
 
 
-    /* =====================================
-    =               Section 02             =
-    ===================================== */
 
-    //Message2 se utiliza para la parte de almacenar y devolver los logs completos.
-    socket.on("message2", data => {
-        logs.push({ socketid: socket.id, message: data })
-        socketServer.emit('log', { logs });
-    });
+    // aqui vamos a recibir { user: user, message: catBox.value }
+    socket.on('message', data => {
+        messages.push(data)
+
+        // enviamos un array de objetos a todos los clientes 
+        // ---> [{ user: "Juan", message: "Hola" }, { user: "Elias", message: "Como estas?" }]
+
+        socketServer.emit('messageLogs', messages)
+    })
+
+
+
+    socket.on('userConnected', data => {
+        socket.broadcast.emit('userConnected', data.user)
+    })
 
 
 })
