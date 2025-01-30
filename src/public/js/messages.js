@@ -79,3 +79,15 @@ socket.on('userConnected', data => {
         showConfirmButton: false  // No muestra el botón de confirmación
     })
 })
+
+
+
+
+/*=============================================
+=                   Extras                   =
+=============================================*/
+const closeChatBox = document.getElementById('closeChatBox')
+closeChatBox.addEventListener('click', (evt) => {
+    socket.emit('closeChat', { close: "close" })
+    messagesLogs.innerHTML = '';
+})

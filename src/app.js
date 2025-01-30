@@ -71,4 +71,12 @@ socketServer.on('connection', socket => {
     })
 
 
+    // Cerramos el canal de comunicacion
+    socket.on('closeChat', data => {
+        if (data.close === "close") {
+            socket.disconnect()
+        }
+    })
+
+
 })
